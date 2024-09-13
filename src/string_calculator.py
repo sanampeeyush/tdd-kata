@@ -18,26 +18,45 @@ class StringCalculator:
         if numbers == "":
             return 0
 
-        delimiter = ",|\n"
+        # Default delimiters are comma and newline
+        delimiters = ",|\n"
 
-        # Check if custom delimiters are present
+        # Handle custom delimiters
         if numbers.startswith("//"):
-            delimiter_section, numbers = numbers[2:].split("\n", 1)
-            delimiter = "|".join(
-                re.escape(delim)
-                for delim in re.findall(r"\[([^\]]+)\]", delimiter_section)
-            )
+            delimiter_section, numbers = numbers.split("\n", 1)
+            delimiters = self.extract_custom_delimiters(delimiter_section)
 
         # Split the numbers using the detected delimiters
-        num_list = [
-            int(num)
-            for num in re.split(delimiter, numbers)
-            if num != "" and int(num) <= 1000
-        ]
+        num_list = re.split(delimiters, numbers)
 
-        # Detect negative numbers and raise an exception if present
-        negatives = [num for num in num_list if num < 0]
+        # Process the numbers and handle negative numbers and large numbers
+        return self.process_numbers(num_list)
+
+    def extract_custom_delimiters(self, delimiter_section: str) -> str:
+        # If there are multiple custom delimiters or longer ones
+        if delimiter_section.startswith("//["):
+            delimiters = re.findall(r"\[(.*?)\]", delimiter_section)
+            # Join all delimiters into a single regex pattern (escaping special characters)
+            return "|".join(map(re.escape, delimiters))
+        else:
+            # Single character delimiter
+            return re.escape(delimiter_section[2])
+
+    def process_numbers(self, num_list) -> int:
+        negatives = []
+        total_sum = 0
+
+        for num in num_list:
+            if num == "":
+                continue
+            number = int(num)
+            if number < 0:
+                negatives.append(number)
+            elif number <= 1000:
+                total_sum += number
+
+        # Raise exception if there are negative numbers
         if negatives:
             raise ValueError(f"negatives not allowed: {negatives}")
 
-        return sum(num_list)
+        return total_sum
