@@ -14,8 +14,6 @@ class StringCalculator:
 
     def add(self, numbers: str) -> int:
         self.call_count += 1
-        if numbers == "":
-            return 0
 
         delimiter = ",|\n"
         if numbers.startswith("//"):
@@ -23,7 +21,9 @@ class StringCalculator:
             delimiter = re.escape(parts[0][2:])
             numbers = parts[1]
 
-        num_list = list(map(int, re.split(delimiter, numbers)))
+        num_list = [
+            int(num) for num in re.split(delimiter, numbers) if int(num) <= 1000
+        ]
         negatives = [num for num in num_list if num < 0]
         if negatives:
             raise ValueError(f"negatives not allowed: {negatives}")
