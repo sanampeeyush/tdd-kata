@@ -48,3 +48,11 @@ class TestStringCalculator(unittest.TestCase):
     def test_ignore_large_numbers(self):
         calc = StringCalculator()
         self.assertEqual(calc.add("2,1001"), 2)
+
+    def test_multiple_delimiters(self):
+        calc = StringCalculator()
+        self.assertEqual(calc.add("//[*][%]\n1*2%3"), 6)
+
+    def test_longer_delimiters(self):
+        calc = StringCalculator()
+        self.assertEqual(calc.add("//[***]\n1***2***3"), 6)
