@@ -17,9 +17,11 @@ class StringCalculator:
 
         delimiter = ",|\n"
         if numbers.startswith("//"):
-            parts = numbers.split("\n", 1)
-            delimiter = re.escape(parts[0][2:])
-            numbers = parts[1]
+            delimiter_section, numbers = numbers[2:].split("\n", 1)
+            delimiter = "|".join(
+                re.escape(delim)
+                for delim in re.findall(r"\[([^\]]+)\]", delimiter_section)
+            )
 
         num_list = [
             int(num) for num in re.split(delimiter, numbers) if int(num) <= 1000
