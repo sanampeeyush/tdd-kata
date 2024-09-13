@@ -44,3 +44,7 @@ class TestStringCalculator(unittest.TestCase):
         calc.add("1,2")
         calc.add("3,4")
         self.assertEqual(calc.get_called_count(), 2)
+
+    def test_ignore_large_numbers(self):
+        calc = StringCalculator()
+        self.assertEqual(calc.add("2,1001"), 2)
