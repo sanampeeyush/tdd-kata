@@ -26,3 +26,15 @@ class TestStringCalculator(unittest.TestCase):
     def test_custom_delimiter(self):
         calc = StringCalculator()
         self.assertEqual(calc.add("//;\n1;2"), 3)
+
+    def test_negative_numbers(self):
+        calc = StringCalculator()
+        with self.assertRaises(ValueError) as cm:
+            calc.add("1,-2,3")
+        self.assertEqual(str(cm.exception), "negatives not allowed: [-2]")
+
+    def test_multiple_negative_numbers(self):
+        calc = StringCalculator()
+        with self.assertRaises(ValueError) as cm:
+            calc.add("1,-2,-3")
+        self.assertEqual(str(cm.exception), "negatives not allowed: [-2, -3]")
